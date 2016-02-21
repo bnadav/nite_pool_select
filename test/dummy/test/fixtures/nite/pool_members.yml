@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  membership_type: MyString
+  membership_id: 1
+  pool_id: 1
+  name: MyString
+  description: MyString
+
+two:
+  membership_type: MyString
+  membership_id: 1
+  pool_id: 1
+  name: MyString
+  description: MyString
