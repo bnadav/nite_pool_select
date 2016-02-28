@@ -6,5 +6,10 @@ module Nite
     has_many :items, through: :pool_members, 
       source: :membership, source_type: 'Item'
 
+    def select(used)
+      candidates = self.items - excluded_elements(used)
+      candidates[rand(candidates.size)]
+    end
+
   end
 end

@@ -9,16 +9,40 @@ module Nite
     end
 
   end
-end
 
-class Chapter < ActiveRecord::Base
-  include Nite::ModelPools
-end
+  # A configuration module. Configuration can be changed via
+  # the config/initializers/nite_pool_select.rb file
+  # For each model marked, the Nite::ModelPools module is mixed in.
+  module PoolSelect
+    module Configure
+      defaults = Struct.new(:chapters_pool, :units_pool, :items_pool)
+      # default values 
+      @config = defaults.new(true, true, true)
 
-# class Unit < ActiveRecord::Base
-#   include Nite::ModelPools
-# end
-#
-# class Item < ActiveRecord::Base
-#   include Nite::ModelPools
-# end
+      def self.run &block
+        if block_given?
+          block.call(@config) 
+        end
+        mixin_pools_into_models
+      end
+
+      # Do the actual definition of models and mix in the Nite::ModelPools module into them.
+      def self.mixin_pools_into_models
+        models_list = []
+        models_list << "Chapter" if @config.chapters_pool
+        models_list << "Unit" if @config.units_pool
+        models_list << "Item" if @config.items_pool
+
+        models_list.each do |model|
+          Object.const_set model, Class.new(ActiveRecord::Base) 
+          model.constantize.send :include, Nite::ModelPools
+        end
+      end
+
+      def self.config
+        @config
+      end
+
+    end
+  end
+end

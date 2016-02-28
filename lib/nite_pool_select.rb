@@ -6,7 +6,6 @@ require 'app/models/nite/item_pool'
 require 'app/models/nite/pool_member'
 require 'nite_pool_select/model_pools'
 
-
 module Nite
   # for activer record use
   def self.table_name_prefix
@@ -17,3 +16,4 @@ module Nite
   end
 
 end
+

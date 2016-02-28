@@ -23,6 +23,11 @@ module Nite
         end
       end
 
+      # copy initializer
+      def copy_initializer
+        copy_file "initializer.rb", "config/initializers/nite_pool_select.rb"
+      end
+
 
       private
 
