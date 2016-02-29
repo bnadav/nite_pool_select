@@ -1,6 +1,8 @@
 module Nite
   class Pool < ActiveRecord::Base
 
+    validates :parent_id, uniqueness: {scope: :type}
+
     def excluded_elements(used_elements)
       excluded = used_elements
       if exclude_dependent?
