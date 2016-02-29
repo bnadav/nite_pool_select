@@ -39,11 +39,13 @@ ActiveRecord::Schema.define(version: 20160221135112) do
     t.string   "name"
     t.string   "description"
     t.string   "type"
-    t.boolean  "with_dependencies"
     t.integer  "parent_id"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
+
+  add_index "nite_pools", ["name"], name: "index_nite_pools_on_name", unique: true
+  add_index "nite_pools", ["parent_id"], name: "index_nite_pools_on_parent_id", unique: true
 
   create_table "units", force: :cascade do |t|
     t.integer  "number"
