@@ -6,7 +6,11 @@ module Nite
     included do
       has_many :pool_members, :as => :membership, class_name: 'Nite::PoolMember'
       has_many "#{name.underscore}_pools".to_sym, through: :pool_members, class_name: "Nite::#{name}Pool", source: 'pool'
+
+
+      define_method(:pool_placeholder?) { (self.name =~ /POOL_SELECT/) != nil }
     end
+
 
   end
 
@@ -37,7 +41,9 @@ module Nite
         models_list << "Item" if @config.items_pool
 
         models_list.each do |model|
-          Object.const_set model, Class.new(ActiveRecord::Base) 
+          unless Object.const_defined? model
+            Object.const_set model, Class.new(ActiveRecord::Base) 
+          end
           model.constantize.send :include, Nite::ModelPools
         end
       end
