@@ -9,6 +9,6 @@ class CreateNitePools < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_index :nite_pools, :name, :unique => true
-    add_index :nite_pools, :parent_id, :unique => true
+    add_index :nite_pools, [:type, :parent_id], :unique => true
   end
 end

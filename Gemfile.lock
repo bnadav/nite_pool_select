@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    nite_pool_select (0.0.1)
-      rails (~> 4.2.5.1)
+    nite_pool_select (0.0.1.pre.alpha)
+      rails (~> 4.1)
 
 GEM
   remote: https://rubygems.org/
