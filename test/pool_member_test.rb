@@ -45,5 +45,6 @@ class Nite::PoolMemberTest < ActiveSupport::TestCase
   end
 
 
+
   # In future version add the same capability also to Unit and Item models
 end

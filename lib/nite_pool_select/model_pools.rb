@@ -15,10 +15,13 @@ module Nite
   # For each model marked, the Nite::ModelPools module is mixed in.
   module PoolSelect
     module Configure
+      # config options
       defaults = Struct.new(:chapters_pool, :units_pool, :items_pool)
-      # default values 
+      # default values (for matching option)
       @config = defaults.new(true, true, true)
 
+      # override the defaluts by calling the block with the config object
+      # The method is invoked in initializer
       def self.run &block
         if block_given?
           block.call(@config) 
@@ -39,9 +42,9 @@ module Nite
         end
       end
 
-      def self.config
-        @config
-      end
+      # def self.config
+      #   @config
+      # end
 
     end
   end

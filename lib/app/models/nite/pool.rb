@@ -3,10 +3,18 @@ module Nite
 
     def excluded_elements(used_elements)
       excluded = used_elements
-      if defined? Nite::Dependency
-        excluded += used_elements.inject([]) {|m, elem| m += elem.dependencies.map(&:id); m}.flatten
+      if exclude_dependent?
+        #puts "*** #{used_elements.first.dependencies}"
+        excluded += used_elements.inject([]) {|m, elem| m += elem.dependencies; m}.flatten
       end
+      #puts "*** Excluded = #{excluded}"
       excluded
+    end
+
+    protected
+
+    def exclude_dependent?
+      defined? Nite::Dependency
     end
 
   end
