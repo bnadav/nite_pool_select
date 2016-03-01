@@ -41,7 +41,9 @@ module Nite
         models_list << "Item" if @config.items_pool
 
         models_list.each do |model|
+          puts "**** Checking #{model}"
           unless Object.const_defined? model
+            puts "Constant not defined #{model}"
             Object.const_set model, Class.new(ActiveRecord::Base) 
           end
           model.constantize.send :include, Nite::ModelPools
