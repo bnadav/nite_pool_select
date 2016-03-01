@@ -6,9 +6,10 @@ module Nite
     included do
       has_many :pool_members, :as => :membership, class_name: 'Nite::PoolMember'
       has_many "#{name.underscore}_pools".to_sym, through: :pool_members, class_name: "Nite::#{name}Pool", source: 'pool'
+    end
 
-
-      define_method(:pool_placeholder?) { (self.name =~ /POOL_SELECT/) != nil }
+    def pool_placeholder?
+      (self.name =~ /POOL_SELECT/) != nil 
     end
 
 
@@ -30,30 +31,41 @@ module Nite
         if block_given?
           block.call(@config) 
         end
-        mixin_pools_into_models
       end
 
-      # Do the actual definition of models and mix in the Nite::ModelPools module into them.
-      def self.mixin_pools_into_models
-        models_list = []
-        models_list << "Chapter" if @config.chapters_pool
-        models_list << "Unit" if @config.units_pool
-        models_list << "Item" if @config.items_pool
-
-        models_list.each do |model|
-          puts "**** Checking #{model}"
-          unless Object.const_defined? model
-            puts "Constant not defined #{model}"
-            Object.const_set model, Class.new(ActiveRecord::Base) 
-          end
-          model.constantize.send :include, Nite::ModelPools
-        end
+      def self.config
+        @config
       end
-
-      # def self.config
-      #   @config
-      # end
 
     end
   end
+
+  # Mixin ModelPools module into model if so configured
+  # and recall the missing method after the inclusion of the mixin
+  module MethodMissinHandler
+    include ActiveSupport::Inflector 
+    def method_missing(method_name, *arguments, &block)
+      if(method_name == :pool_placeholder? || method_name == :pool_members || method_name.to_s =~ /^.*_pools?/) &&
+        (mixin_model_pools(method_name, *arguments, &block))
+        self.send method_name, *arguments, &block
+      else
+        super
+      end
+    end
+
+    private
+    # mixin the Nite::ModelPools module into self's class, if 
+    # Nite::PoolSelect::Config.config object marks it as poolable. i.e if config
+    # config.chapter_pool = true, and also self is an instance of Chapter, then perform the mixin.
+    # Otherwise return nil
+    def mixin_model_pools(method_name, *arguments, &block)
+      pool_name = "#{self.class.to_s.tableize}_pool".to_sym
+      if Nite::PoolSelect::Configure.config.try(pool_name)
+        self.class.send :include, Nite::ModelPools
+      end
+    end
+  end
 end
+
+ActiveRecord::Base.send :include, Nite::MethodMissinHandler
+
