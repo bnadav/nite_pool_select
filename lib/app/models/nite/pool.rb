@@ -1,8 +1,16 @@
 module Nite
   class Pool < ActiveRecord::Base
 
-    validates :parent_id, uniqueness: {scope: :type}
+    validates_uniqueness_of :parent_id,  {scope: :type, allow_nil: true}
 
+    attr_writer :placeholder
+
+    before_validation do
+      self.parent_id = @placeholder.id if @placeholder
+    end
+
+    # Exclude used elements and also dependent elements on those included
+    # in used_elements array, IF the nite_dependency gem is installed
     def excluded_elements(used_elements)
       excluded = used_elements
       if exclude_dependent?

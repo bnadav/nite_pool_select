@@ -15,10 +15,6 @@ module Nite
   module PoolSelect
     def self.pool_by_parent(parent)
       klass = parent.class 
-      unless [Chapter, Unit, Item].include? klass
-        raise "Parent must be of class Chapter, Unit or Item - got #{klass}"
-      end
-
       pool_type = "Nite::#{klass}Pool".constantize #i.e ChaptePool, UnitPool, ItemPool
       pool_type.find_by(parent_id: parent.id)
     end
