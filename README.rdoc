@@ -1,3 +1,128 @@
 = NitePoolSelect
 
-This project rocks and uses MIT-LICENSE.
+This plugin add capabilities for selection of elements from pre-defined pools.
+The plugin automatically uses the *nite_dependencies* library, 
+if installed.
+The plugin is intended to be used within the nite_testing application.
+
+== Installation
+
+Add to your Gemfile
+  
+  gem 'nite_poo_select'
+
+And run bundle install.
+Then run the installer generator
+
+  rails generate nite:pool_select:install
+
+The installer will copy some migration files, as well as an initializer file
+named nite_pool_select.rb (into config/initializers)
+
+Finally run rake db:migrate in order to update the database.
+
+== Usage
+
+The plugin adds capabilities for:
+* Create/edit/delete pools of elements
+* Adding and deleting elements to/from a pool
+* Selecting randomly an element from a pool
+* Checking if an element belongs to a pool
+
+*Note:* There is a many-to-many relationship between elements and pools of the same 'type'
+i.e a chapter can belong to zero, one or multiple pool. Likewise a ChapterPool can include
+zero, one or many chapters.
+*Note:* The only elements supported by the plugin are *Chapter*, *Unit* and *Item* models.
+
+=== Models
+The library can add the following models to the containing app:
+  Nite::ChpaterPool
+  Nite::UnitPool
+  Nite::ItemPool
+By default all pools will be available. 
+If some of the pool are not needed (e.g the app only needs a chapter pool), 
+this can be easily achieved by modifying the config file
+  config/initializers/nite_poo_select.rb
+according to the comments there.
+
+In addition a polymorphic model named 
+  Nite::PoolMember
+is added by the plugin. This model serves to associate elements (chapters, untis or items) 
+with their corresponding pools.
+
+=== Placholders
+There is a general finder method that fetches a pool via a given 'placeholder' element.
+A placeholder is an element (again:chapter, unit or item), that servers
+as it's name suggests, only as a pointer to a pool of elements of the same type:
+So a chapter placeholder can point to a chapter-pool, a unit placeholder can point
+to a unit-pool and an item placeholder can point to an item-pool.
+Fetching of pool by place holder is done via call to
+  Nite::PoolSelect.pool_by_parent(parent)
+where parent is a placeholder model.
+
+Internally a place holder is recognized by a name field that ends with "POOL_SELECT".
+Since it is not expected that the user will remember this, the plugin adds to Chapter, Unit
+and Item models (unless otherwise configured in initializer), a helper boolean method named
+  pool_placeholder?
+
+=== Element Selection
+Pools have #select method which accepts an array of 'forbidden' elements
+and return a randomly selected element from the pool which is not in the forbidden list.
+If the *nite_dependency* gem is installed, then also elements dependent on those that
+are in the forbidden list will be excluded from selection.
+
+=== Associations
+For Chapter
+  c = Chapter.find(...)
+  c.chapter_pools # -> list of chapter-pools the object is in
+  c.pool_members # -> list of association records that connect an element to a pool
+For Unit
+  u = Unit.find(...)
+  u.unit_pools # -> list of unit-pools
+  u.pool_members
+For Item
+  i = Item.find(...)
+  i.item_pools # -> list of item-pools
+  i.pool_members
+For ChapterPool
+  cp = Nite::ChapterPool.find(...)
+  cp.chapters # -> list of chapters in pool
+  cp.pool_members
+For UnitPool
+  cp = Nite::UnitPool.find(...)
+  cp.units # -> list of units in pool
+  cp.pool_members
+For ItemPool
+  cp = Nite::ItemPool.find(...)
+  cp.items # -> list of items in pool
+  cp.pool_members
+
+=== Adding an Element to a Pool
+  cp = Nite::ChapterPool.find(...)
+  c = Chapter.find(...)
+  cp.chapters << c
+
+*Note*: Each pool 'type' may contain only element of the suggested class 
+(i.e Chapter pool may contain chapters but not units and so on...)
+
+== More Examples
+
+  ph = Chapter.create(name: "C_POOL_SELECT", number:99)  # a placeholder chapter
+  c1 = Chapter.create(number: 1)
+  c2 = Chapter.create(number: 2)
+  Nite::ChapterPool.create(placeholder: ph)
+  cp = Nite::PoolSelect.pool_by_parent(ph)               # returns the above created pool
+  cp.chapters << [c1, c2]                                # Add chapters to pool
+  cp.chapters                                            # [c1, c2]
+  cp.select([])                                          # either c1 or c2
+  cp.select([c1])                                        # c2
+  cp.select([c1, c2])                                    # nil
+  ph.pool_placeholder?                                   # true
+  c1.pool_placeholder?                                   # false
+
+
+
+
+
+
+
