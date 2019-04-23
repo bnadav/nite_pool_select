@@ -6,9 +6,17 @@ module Nite
     has_many :units, through: :pool_members, 
       source: :membership, source_type: 'Unit'
 
-    def select(used)
-      candidates = self.units - excluded_elements(used)
-      candidates[rand(candidates.size)]
+    def find_candidates(used)
+      self.units - excluded_elements(used)
     end
+
+    # def select(used, &block)
+    #   candidates = self.units - excluded_elements(used)
+    #   if block_given?
+    #     yield(candidates)
+    #   else
+    #     candidates[rand(candidates.size)]
+    #   end
+    # end
   end
 end

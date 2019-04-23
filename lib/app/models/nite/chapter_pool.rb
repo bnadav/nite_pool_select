@@ -6,10 +6,14 @@ module Nite
     has_many :chapters, through: :pool_members, 
       source: :membership, source_type: 'Chapter'
 
-    def select(used)
-      candidates = self.chapters - excluded_elements(used)
-      candidates[rand(candidates.size)]
+    def find_candidates(used)
+      self.chapters - excluded_elements(used)
     end
 
+    # def select(used)
+    #   candidates = self.chapters - excluded_elements(used)
+    #   candidates[rand(candidates.size)]
+    # end
+    #
   end
 end

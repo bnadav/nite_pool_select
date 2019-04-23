@@ -6,7 +6,7 @@ require "nite_pool_select/version"
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "nite_pool_select"
-  s.version     = NitePoolSelect::VERSION
+  s.version     = "0.0.2"
   s.authors     = ["Nadav Blum"]
   s.email       = ["nadav@nite.org.il"]
   s.homepage    = ""

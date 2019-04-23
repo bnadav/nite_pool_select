@@ -19,6 +19,15 @@ module Nite
       excluded
     end
 
+    def select(used, &block)
+      candidates = find_candidates(used) # In subclasses
+      if block_given?
+        yield(candidates)
+      else
+        candidates[rand(candidates.size)]
+      end
+    end
+
     protected
 
     def exclude_dependent?

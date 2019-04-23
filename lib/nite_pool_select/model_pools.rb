@@ -5,6 +5,7 @@ module Nite
 
     included do
       has_many :pool_members, :as => :membership, class_name: 'Nite::PoolMember'
+      # name below refers to class name, i.e so if including model is a Chapter, name = "Chapter"
       has_many "#{name.underscore}_pools".to_sym, through: :pool_members, class_name: "Nite::#{name}Pool", source: 'pool'
     end
 
