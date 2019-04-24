@@ -42,4 +42,18 @@ class NitePoolSelectTest < ActiveSupport::TestCase
 
   end
 
+  test "When block is given to #select, it is called with candidates list" do
+    candidates_list = []
+    @chapter_pool.select([]) {|chapters| candidates_list = chapters}
+    assert candidates_list.size == 3
+    assert candidates_list == Chapter.where(number: [1,2,3]).order(:number)
+  end
+
+  test "When block is given to #select, then block's reurn value is returned" do
+    selected = @chapter_pool.select([]) {|chapters| chapters[1] }
+    # chapter index 1 in the candidates list has attribute numbe = 2 
+    assert selected == Chapter.find_by(number: 2)
+  end
+
+
 end

@@ -19,6 +19,10 @@ module Nite
       excluded
     end
 
+    # Generic method used by all Pool subclasses (ItemPool etc...)
+    # Method #find_candinates is defined in each subclas.
+    # In case a block is given, yield candidates list to the block. The block then sholud return the selected element.
+    # If no block is given, randomly choose one of the candinates.
     def select(used, &block)
       candidates = find_candidates(used) # In subclasses
       if block_given?
