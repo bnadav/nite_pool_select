@@ -67,7 +67,11 @@ and Item models (unless otherwise configured in initializer), a helper boolean m
 
 === Element Selection
 Pools have #select method which accepts an array of 'forbidden' elements
-and return a randomly selected element from the pool which is not in the forbidden list.
+and return an element from the pool that is not included in the forbidden list.
+The method can operate in two modes: with a block and without a block.
+* With a block: * the block is yielded with all non-forbidden pool elements as a parameter. The retrun value
+of the block is the return value of the method.
+* Without a block: * the method returns a randomly selected element from the pool which is not in the forbidden list.
 If the *nite_dependency* gem is installed, then also elements dependent on those that
 are in the forbidden list will be excluded from selection.
 
@@ -117,6 +121,7 @@ For ItemPool
   cp.select([])                                          # either c1 or c2
   cp.select([c1])                                        # c2
   cp.select([c1, c2])                                    # nil
+  cp.select() {|chapters| chapters.first}                # c1
   ph.pool_placeholder?                                   # true
   c1.pool_placeholder?                                   # false
 
